@@ -1,0 +1,13 @@
+[project]
+name = "trading-decision-support"
+version = "1.0.0"
+description = "Rules engine for a discretionary futures strategy"
+requires-python = ">=3.10"
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]

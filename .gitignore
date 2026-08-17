@@ -1,0 +1,36 @@
+# --- data -----------------------------------------------------------
+# The parquets are ~110 MB combined. Keep them out of git: GitHub's limit
+# is 100 MB per file, and Railway/Streamlit filesystems are ephemeral, so
+# baking data into the image is slow and fragile. Load at runtime instead.
+data/
+*.parquet
+*.csv.zst
+*.zip
+
+# outputs
+*.csv
+report*.html
+tuning_results.csv
+trades*.csv
+
+# --- python ---------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# --- secrets --------------------------------------------------------
+.env
+.streamlit/secrets.toml
+
+# --- editors / os ---------------------------------------------------
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+.DS_Store
