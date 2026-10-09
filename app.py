@@ -17,15 +17,24 @@ from __future__ import annotations
 
 import io
 import os
-from datetime import date, timedelta
+import sys
+from datetime import date
 
-import numpy as np
 import pandas as pd
 import streamlit as st
 
-from src import (CONTRACT_SPECS, build_liquidity_map, check, evaluate_session,
-                 load_parquet, mark_tapped, run_backtest, scan_range,
-                 setups_to_frame, untapped_targets, veto_summary)
+# Make `src` importable when Streamlit is launched from another directory.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from src import (  # noqa: E402
+    CONTRACT_SPECS,
+    check,
+    evaluate_session,
+    load_parquet,
+    run_backtest,
+    scan_range,
+    veto_summary,
+)
 
 st.set_page_config(page_title="Trading Decision Support", page_icon="📊",
                    layout="wide", initial_sidebar_state="expanded")
@@ -103,18 +112,23 @@ def sidebar_settings() -> dict:
         stop_min = st.sidebar.number_input("Min ticks", 10, 1000, 200, 10)
         stop_max = st.sidebar.number_input("Max ticks", 10, 2000, 500, 10)
 
-    return dict(use_amd=use_amd, trigger_mode=trigger_mode,
-                allow_confirmed_breakout=allow_confirmed,
-                entry_start=entry_start, entry_end=entry_end,
-                account=account, risk=risk, rr=rr, stop_mode=stop_mode,
-                stop_ticks=stop_ticks, stop_min=stop_min, stop_max=stop_max)
+    return {
+        "use_amd": use_amd, "trigger_mode": trigger_mode,
+        "allow_confirmed_breakout": allow_confirmed,
+        "entry_start": entry_start, "entry_end": entry_end,
+        "account": account, "risk": risk, "rr": rr,
+        "stop_mode": stop_mode, "stop_ticks": stop_ticks,
+        "stop_min": stop_min, "stop_max": stop_max,
+    }
 
 
 def engine_kwargs(s: dict) -> dict:
-    kw = dict(use_amd=s["use_amd"], trigger_mode=s["trigger_mode"],
-              allow_confirmed_breakout=s["allow_confirmed_breakout"],
-              entry_start=s["entry_start"], entry_end=s["entry_end"],
-              rr=s["rr"], risk_pct=s["risk"], stop_mode=s["stop_mode"])
+    kw = {
+        "use_amd": s["use_amd"], "trigger_mode": s["trigger_mode"],
+        "allow_confirmed_breakout": s["allow_confirmed_breakout"],
+        "entry_start": s["entry_start"], "entry_end": s["entry_end"],
+        "rr": s["rr"], "risk_pct": s["risk"], "stop_mode": s["stop_mode"],
+    }
     if s["stop_mode"] == "fixed":
         kw["stop_ticks"] = s["stop_ticks"]
     elif s["stop_mode"] == "clamped":
@@ -132,7 +146,7 @@ def tab_today(data, s):
     st.caption("Every gate that passed, and the one that stopped each candidate.")
 
     idx = data["NQ"].index
-    c1, c2 = st.columns([1, 3])
+    c1, _ = st.columns([1, 3])
     d = c1.date_input("Session", value=idx.max().date(),
                       min_value=idx.min().date(), max_value=idx.max().date())
 

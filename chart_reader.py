@@ -170,10 +170,13 @@ def read_chart(path: str, provider: str = "anthropic", api_key: str | None = Non
                 print(f"  {k:<15} {v}" + (f"   [{conf} confidence]" if conf else ""))
         lv = out.get("drawn_levels") or []
         if lv:
-            print(f"  drawn levels    " +
-                  ", ".join(f"{l.get('price')}" +
-                            (f" ({l['label']})" if l.get("label") else "")
-                            for l in lv))
+            parts = []
+            for item in lv:
+                txt = str(item.get("price"))
+                if item.get("label"):
+                    txt += f" ({item['label']})"
+                parts.append(txt)
+            print("  drawn levels    " + ", ".join(parts))
         if out.get("notes"):
             print(f"  notes           {out['notes']}")
         low = [k for k, v in (out.get("confidence") or {}).items() if v == "low"]
